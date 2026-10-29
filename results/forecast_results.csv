@@ -4,3 +4,4 @@ Persistence: tomorrow = today,0.703,0.625,,0.297
 Climatology: rain rate for that month,0.679,0.67,0.727,0.204
 Logistic regression,0.725,0.638,0.785,0.184
 Random forest,0.728,0.648,0.785,0.183
+XGBoost,0.717,0.628,0.755,0.2

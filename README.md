@@ -1,6 +1,6 @@
 # Seattle Weather: Classification vs Real Forecasting
 
-![tests](https://github.com/ranzith1282000-beep/seattle-weather-ml/actions/workflows/ci.yml/badge.svg)
+![tests](https://github.com/ranzith1282000-beep/seattle-weather-ML/actions/workflows/ci.yml/badge.svg)
 
 Four years of daily Seattle weather (2012–2015, 1,461 days) used to answer two questions:
 
@@ -17,16 +17,16 @@ Every rain and snow day in the data has precipitation recorded, and every sun, f
 |---|---|---|---|---|---|
 | Always predict the most common type | 42.0% | 0.12 | 0% | 0% | 0% |
 | **Precipitation rule (no machine learning)** | **81.2%** | 0.45 | 0% | 0% | 33% |
-| XGBoost, original settings | XGB_ORIG_ACC | XGB_ORIG_F1 | XGB_ORIG_FOG | XGB_ORIG_DRIZ | XGB_ORIG_SNOW |
-| XGBoost, original grid search | XGB_GRID_ACC | XGB_GRID_F1 | XGB_GRID_FOG | XGB_GRID_DRIZ | XGB_GRID_SNOW |
-| XGBoost, season features + balanced weights | XGB_BAL_ACC | XGB_BAL_F1 | XGB_BAL_FOG | XGB_BAL_DRIZ | XGB_BAL_SNOW |
-| Random forest, season features + balanced weights | 74.4% | **0.57** | 38% | 20% | 83% |
+| XGBoost, original settings | 75.8% | 0.47 | 14% | 0% | 33% |
+| XGBoost, original grid search | 80.9% | 0.47 | 3% | 0% | 33% |
+| XGBoost, season features + balanced weights | 75.1% | **0.58** | 38% | 40% | 50% |
+| Random forest, season features + balanced weights | 74.4% | 0.57 | 38% | 20% | 83% |
 
-*Test set: 293 days (125 sun, 123 rain, 29 fog, 10 drizzle, 6 snow). Macro F1 averages the score across all five weather types equally, so rare types count as much as common ones.*
+*The original-settings row scored 76.8% in my first notebook; the small difference comes from a newer XGBoost version. Test set: 293 days (125 sun, 123 rain, 29 fog, 10 drizzle, 6 snow). Macro F1 averages the score across all five weather types equally, so rare types count as much as common ones.*
 
 **What this shows:**
-- **Accuracy was the wrong measure.** Rain and sun make up 85% of days, so a model can score 81% while never once identifying fog or drizzle. The original model did exactly that.
-- **Weighting the rare types up** and adding the time of year (two-thirds of fog days fall between September and January) makes the models catch most snow and a good share of fog. Overall accuracy falls, but macro F1 rises from 0.45 to 0.57. Which one matters depends on the use: a fog warning system would want the second model.
+- **Accuracy was the wrong measure.** Rain and sun make up 85% of days, so a model can score 81% while barely recognising the rare types. The original tuned model caught 1 of the 29 fog days and none of the 10 drizzle days.
+- **Weighting the rare types up** and adding the time of year (two-thirds of fog days fall between September and January) helps the models catch rare types: the random forest finds 83% of snow days, and the rebalanced XGBoost finds 40% of drizzle and 38% of fog. Overall accuracy falls to about 75%, but macro F1 rises from 0.47 to 0.58. Which one matters depends on the use: a fog warning system would want the second model.
 - **Fog and drizzle can't be told apart reliably** from these four measurements. Both have zero precipitation and similar temperatures.
 
 ![Confusion matrix](images/confusion_matrix.png)
@@ -52,9 +52,9 @@ To mimic real use, the models train on **2012–2014** and are tested on **2015*
 | Climatology: rain rate for that month | 67.9% | 0.67 | 0.727 | 0.204 |
 | Logistic regression | 72.5% | 0.64 | 0.785 | 0.184 |
 | Random forest | 72.8% | 0.65 | 0.785 | 0.183 |
-| XGBoost | XGB_FC_ACC | XGB_FC_F1 | XGB_FC_AUC | XGB_FC_BRIER |
+| XGBoost | 71.7% | 0.63 | 0.755 | 0.200 |
 
-**What this shows:** the models beat every simple baseline, but only by a few points. "Tomorrow will be like today" is already right 70% of the time. With four basic measurements and no air pressure, humidity or cloud data, that's about as far as daily forecasting can go. Real forecasters use far richer data. Simple logistic regression does as well as the tree models, so it would be the sensible choice here: it's faster, and easier to explain.
+**What this shows:** the models beat every simple baseline, but only by a few points. "Tomorrow will be like today" is already right 70% of the time. With four basic measurements and no air pressure, humidity or cloud data, that's about as far as daily forecasting can go. Real forecasters use far richer data. Simple logistic regression does as well as the random forest, and XGBoost does slightly worse (71.7%). So logistic regression would be the sensible choice here: it's faster, and easier to explain.
 
 ## What I changed from the first version
 
@@ -69,8 +69,8 @@ To mimic real use, the models train on **2012–2014** and are tested on **2015*
 ## Run it yourself
 
 ```bash
-git clone https://github.com/ranzith1282000-beep/seattle-weather-ml.git
-cd seattle-weather-ml
+git clone https://github.com/ranzith1282000-beep/seattle-weather-ML.git
+cd seattle-weather-ML
 pip install -r requirements.txt
 python src/classify_today.py      # Part 1 tables and charts
 python src/forecast_tomorrow.py   # Part 2 tables and charts
