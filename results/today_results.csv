@@ -1,0 +1,4 @@
+model,accuracy,macro_f1,recall_drizzle,recall_fog,recall_rain,recall_snow,recall_sun
+Always predict the most common type,0.42,0.118,0.0,0.0,1.0,0.0,0.0
+Precipitation rule (no ML),0.812,0.453,0.0,0.0,0.9,0.33,1.0
+"Random forest, season features + balanced weights",0.744,0.565,0.2,0.38,0.87,0.83,0.74

@@ -1,0 +1,6 @@
+model,accuracy,f1_rain,roc_auc,brier
+Always 'no rain',0.604,0.0,,0.396
+Persistence: tomorrow = today,0.703,0.625,,0.297
+Climatology: rain rate for that month,0.679,0.67,0.727,0.204
+Logistic regression,0.725,0.638,0.785,0.184
+Random forest,0.728,0.648,0.785,0.183
